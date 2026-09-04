@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mrgreenapps.a11ypilot.ServiceState
 import com.mrgreenapps.a11ypilot.agent.AgentSettings
+import com.mrgreenapps.a11ypilot.BuildConfig
 import com.mrgreenapps.a11ypilot.agent.CharacterCard
 import com.mrgreenapps.a11ypilot.agent.CharacterCardParser
 import com.mrgreenapps.a11ypilot.agent.ToolExecutor
@@ -369,9 +370,9 @@ private fun SettingsHome(onOpen: (SettingsPage) -> Unit) {
         SettingsEntry(Icons.Default.Notifications, "后台通知") { onOpen(SettingsPage.NOTIFICATION) }
     }
     SettingsGroup("关于") {
-        SettingsEntry(Icons.Default.Info, "Metis v1.0.0", enabled = false) {}
-        SettingsEntry(Icons.Default.Description, "开源协议（即将提供）", enabled = false) {}
-        SettingsEntry(Icons.Default.Code, "GitHub 仓库（即将提供）", enabled = false) {}
+        SettingsEntry(Icons.Default.Info, "Metis Mobile v${BuildConfig.VERSION_NAME}", enabled = false) {}
+        SettingsEntry(Icons.Default.Description, "开源协议：Apache 2.0", enabled = false) {}
+        SettingsEntry(Icons.Default.Code, "GitHub：linyeping/metis-mobile", enabled = false) {}
     }
 }
 
@@ -717,7 +718,7 @@ private fun PhoneUseSettingsPage(
         )
         if (phoneUseRestricted) {
             Text(
-                "检测到无障碍服务处于“已启用但未连接”状态。请在系统无障碍设置中重新关闭并开启 A11yPilot；部分国产 ROM 还需要在应用信息中允许受限制的设置。",
+                "检测到无障碍服务处于“已启用但未连接”状态。请在系统无障碍设置中重新关闭并开启 Metis；部分国产 ROM 还需要在应用信息中允许受限制的设置。",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.fillMaxWidth()
