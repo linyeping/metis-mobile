@@ -50,7 +50,7 @@ Metis Mobile 将 Android 手机作为一个可以被自然语言驱动的执行�
 ```text
 ┌──────────────────────────────────────────────────────────────┐
 │                         Presentation                         │
-│ Jetpack Compose · Chat/Work/Settings · Remote · Widgets      │
+│ Jetpack Compose · Chat / Work / Settings · Remote · Widgets │
 └──────────────────────────────┬───────────────────────────────┘
                                │ State / Events
 ┌──────────────────────────────▼───────────────────────────────┐
@@ -77,7 +77,7 @@ Metis Mobile 将 Android 手机作为一个可以被自然语言驱动的执行�
 
 | 层次 | 实现 | 责任 |
 | --- | --- | --- |
-| UI | Kotlin + Jetpack Compose + Material 3 | 响应式页面、会话、角色卡、远程控制和设置 |
+| UI | Jetpack Compose + Material 3 | 响应式页面、会话、角色卡、远程控制和设置 |
 | 状态 | ViewModel + Kotlin Coroutines/Flow | 单向状态流、后台任务和生命周期协调 |
 | 持久化 | Room + DataStore Preferences | 会话、消息、自动化、主题和用户配置 |
 | 密钥 | AndroidX Security 加密存储 | API Key 不进入源码、普通日志或导出数据 |
@@ -201,7 +201,7 @@ app/src/main/java/com/mrgreenapps/a11ypilot/
 ├── phoneuse/    Accessibility/PhoneUse、闹钟和自动化接收器
 ├── remote/      Metis Desktop 配对、远程协议和远程 UI
 ├── tools/       文件、Termux、工具注册表和设备能力
-├── ui/          Compose ViewModel、页面、组件和主题
+├── ui/          Jetpack Compose 页面、组件、ViewModel 和主题
 └── widget/      Android 桌面小组件
 ```
 
