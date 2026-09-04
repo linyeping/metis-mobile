@@ -77,6 +77,8 @@ fun SettingsScreen(bottomBarInset: Dp = 0.dp, onExit: (() -> Unit)? = null) {
     val sessionRepository = remember { SessionRepository(context) }
     var page by rememberSaveable { mutableStateOf<SettingsPage?>(null) }
     var notice by remember { mutableStateOf<String?>(null) }
+    var releaseDialog by remember { mutableStateOf<com.mrgreenapps.a11ypilot.agent.GitHubRelease?>(null) }
+    var releaseChecking by remember { mutableStateOf(false) }
 
     val phoneUseEnabled by ServiceState.enabled.collectAsState()
     val phoneUseRestricted by ServiceState.restricted.collectAsState()
@@ -241,6 +243,27 @@ fun SettingsScreen(bottomBarInset: Dp = 0.dp, onExit: (() -> Unit)? = null) {
         }
     }
 
+    releaseDialog?.let { release ->
+        AlertDialog(
+            onDismissRequest = { releaseDialog = null },
+            title = { Text("发现新版本 ${release.tagName}") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("当前版本：v${BuildConfig.VERSION_NAME}")
+                    Text("最新版本：${release.tagName}")
+                    Text(release.body.ifBlank { "新版本已发布，建议前往 GitHub 查看更新说明。" }, maxLines = 8)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    releaseDialog = null
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(release.htmlUrl)))
+                }) { Text("前往下载") }
+            },
+            dismissButton = { TextButton(onClick = { releaseDialog = null }) { Text("暂不更新") } }
+        )
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
@@ -284,18 +307,19 @@ fun SettingsScreen(bottomBarInset: Dp = 0.dp, onExit: (() -> Unit)? = null) {
                     SettingsProfileHeader()
                 }
                 when (page) {
-                    null -> SettingsHome(onOpen = { page = it }, onCheckUpdate = {
+                    null -> SettingsHome(onOpen = { page = it }, checkingUpdate = releaseChecking, onCheckUpdate = {
                         scope.launch {
-                            notice = "正在检查 GitHub 最新版本…"
+                            releaseChecking = true
                             GitHubReleaseChecker.checkLatest().onSuccess { release ->
-                                notice = if (GitHubReleaseChecker.isNewer(release.tagName)) {
-                                    "发现新版本 ${release.tagName}，请前往 GitHub Release 下载"
+                                if (GitHubReleaseChecker.isNewer(release.tagName)) {
+                                    releaseDialog = release
                                 } else {
-                                    "当前已是最新版本 v${BuildConfig.VERSION_NAME}"
+                                    notice = "当前已是最新版本 v${BuildConfig.VERSION_NAME}，暂时没有可用更新。"
                                 }
                             }.onFailure {
-                                notice = "检查更新失败：${it.message ?: "请检查网络连接"}"
+                                notice = "检查更新失败：${it.message ?: "请检查网络连接后重试"}"
                             }
+                            releaseChecking = false
                         }
                     })
                     SettingsPage.MODEL -> ModelApiSettings(
@@ -362,7 +386,7 @@ fun SettingsScreen(bottomBarInset: Dp = 0.dp, onExit: (() -> Unit)? = null) {
 }
 
 @Composable
-private fun SettingsHome(onOpen: (SettingsPage) -> Unit, onCheckUpdate: () -> Unit) {
+private fun SettingsHome(onOpen: (SettingsPage) -> Unit, checkingUpdate: Boolean, onCheckUpdate: () -> Unit) {
     SettingsGroup("模型配置") {
         SettingsEntry(Icons.Default.SmartToy, "默认模型与推理") { onOpen(SettingsPage.MODEL) }
         SettingsEntry(Icons.Default.Key, "API 密钥管理") { onOpen(SettingsPage.API_KEYS) }
@@ -387,7 +411,7 @@ private fun SettingsHome(onOpen: (SettingsPage) -> Unit, onCheckUpdate: () -> Un
         SettingsEntry(Icons.Default.Info, "Metis Mobile v${BuildConfig.VERSION_NAME}", enabled = false) {}
         SettingsEntry(Icons.Default.Description, "开源协议：Apache 2.0", enabled = false) {}
         SettingsEntry(Icons.Default.Code, "GitHub：linyeping/metis-mobile", enabled = false) {}
-        SettingsEntry(Icons.Default.SystemUpdate, "检查更新") { onCheckUpdate() }
+        SettingsEntry(Icons.Default.SystemUpdate, if (checkingUpdate) "正在检查 GitHub 更新…" else "检查更新", enabled = !checkingUpdate) { onCheckUpdate() }
     }
 }
 
