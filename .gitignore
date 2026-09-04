@@ -99,6 +99,7 @@ test-output/
 *.swp
 *~
 .history/
+__pycache__/
 .gradle-home/
 .gradle-home-baseline/
 .gradle-local/

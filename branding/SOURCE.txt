@@ -1,0 +1,5 @@
+Canonical logo: https://github.com/linyeping/Metis/blob/main/desktop/src/assets/logo.png
+Downloaded: 2026-09-05
+SHA-256: 7e7ed6897d3ad5b1da596e53a0172490aab66771ec9d1c53245be31218cae91e
+Regenerate launcher assets: python scripts/generate_logo_assets.py
+Verify generated assets: python scripts/test_logo_assets.py

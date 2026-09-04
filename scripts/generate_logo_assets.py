@@ -4,11 +4,10 @@ from PIL import Image, ImageDraw
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "branding" / "metis-logo-source.webp"
+SOURCE = ROOT / "branding" / "metis-logo-source.png"
 MASTER = ROOT / "branding" / "metis-logo-rounded.png"
 RES = ROOT / "app" / "src" / "main" / "res"
 
-CROP = (150, 130, 1170, 1150)
 DENSITIES = {
     "mdpi": 48,
     "hdpi": 72,
@@ -30,8 +29,23 @@ def rounded(image: Image.Image, size: int, radius_ratio: float) -> Image.Image:
     return resized
 
 
+def adaptive(image: Image.Image) -> Image.Image:
+    # Android masks the central 72dp of a 108dp layer. Extend edge colours
+    # into the overscan area, keeping the entire logo in the visible viewport.
+    artwork = image.resize((288, 288), Image.Resampling.LANCZOS)
+    result = Image.new("RGBA", (432, 432))
+    for y in range(432):
+        for x in range(432):
+            result.putpixel((x, y), artwork.getpixel((
+                min(287, max(0, x - 72)), min(287, max(0, y - 72))
+            )))
+    return result
+
+
 def main() -> None:
-    source = Image.open(SOURCE).convert("RGB").crop(CROP)
+    original = Image.open(SOURCE).convert("RGBA")
+    source = Image.new("RGBA", original.size, original.getpixel((0, original.height // 2)))
+    source.alpha_composite(original)
     MASTER.parent.mkdir(parents=True, exist_ok=True)
     rounded(source, 1024, 0.22).save(MASTER, optimize=True)
 
@@ -41,11 +55,7 @@ def main() -> None:
         rounded(source, size, 0.22).save(target / "ic_launcher.png", optimize=True)
         rounded(source, size, 0.5).save(target / "ic_launcher_round.png", optimize=True)
 
-    foreground_size = 432
-    foreground = Image.new("RGBA", (foreground_size, foreground_size), (0, 0, 0, 0))
-    inset = 66
-    artwork = rounded(source, foreground_size - inset * 2, 0.22)
-    foreground.alpha_composite(artwork, (inset, inset))
+    foreground = adaptive(source)
     drawable_dir = RES / "drawable-nodpi"
     drawable_dir.mkdir(parents=True, exist_ok=True)
     foreground.save(drawable_dir / "metis_launcher_foreground.png", optimize=True)
