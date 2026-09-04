@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Metis</string>
+    <string name="accessibility_service_description">允许 Metis 读取屏幕内容并执行点击、输入和手势，用于 PhoneUse 手机操作。</string>
+    <string name="accessibility_service_summary">Metis PhoneUse 手机操作</string>
+    <string name="phoneuse_service_description">允许 Metis 打开应用、设置闹钟、搜索视频并完成多步骤手机操作。</string>
+    <string name="phoneuse_service_summary">Metis PhoneUse 高级手机操作</string>
+    <string name="shortcut_new_short">新建对话</string>
+    <string name="shortcut_new_long">开始一个新的 Metis 对话</string>
+    <string name="shortcut_task_short">快速任务</string>
+    <string name="shortcut_task_long">直接输入一个手机操作指令</string>
+    <string name="widget_title">Metis</string>
+    <string name="widget_status_idle">空闲</string>
+    <string name="widget_open">打开</string>
+    <string name="widget_new_chat">新对话</string>
+    <string name="widget_settings">设置</string>
+    <string name="widget_description">显示 Metis 后台任务状态并提供快捷入口</string>
+</resources>

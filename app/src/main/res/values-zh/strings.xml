@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Metis</string>
+    <string name="accessibility_service_description">允许 Metis 读取屏幕内容并执行点击、输入和手势操作，让 AI 智能体代表您控制手机。</string>
+    <string name="accessibility_service_summary">Metis — AI 手机智能体</string>
+</resources>

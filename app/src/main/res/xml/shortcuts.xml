@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="new_conversation"
+        android:enabled="true"
+        android:shortcutShortLabel="@string/shortcut_new_short"
+        android:shortcutLongLabel="@string/shortcut_new_long"
+        android:icon="@mipmap/ic_launcher">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="com.mrgreenapps.a11ypilot"
+            android:targetClass="com.mrgreenapps.a11ypilot.MainActivity">
+            <extra android:name="shortcut_action" android:value="new_conversation" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="quick_task"
+        android:enabled="true"
+        android:shortcutShortLabel="@string/shortcut_task_short"
+        android:shortcutLongLabel="@string/shortcut_task_long"
+        android:icon="@mipmap/ic_launcher">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="com.mrgreenapps.a11ypilot"
+            android:targetClass="com.mrgreenapps.a11ypilot.MainActivity">
+            <extra android:name="shortcut_action" android:value="quick_task" />
+        </intent>
+    </shortcut>
+</shortcuts>
