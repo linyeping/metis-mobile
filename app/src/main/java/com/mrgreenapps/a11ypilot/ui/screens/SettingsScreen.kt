@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mrgreenapps.a11ypilot.ServiceState
 import com.mrgreenapps.a11ypilot.agent.AgentSettings
+import com.mrgreenapps.a11ypilot.agent.GitHubReleaseChecker
 import com.mrgreenapps.a11ypilot.BuildConfig
 import com.mrgreenapps.a11ypilot.agent.CharacterCard
 import com.mrgreenapps.a11ypilot.agent.CharacterCardParser
@@ -283,7 +284,20 @@ fun SettingsScreen(bottomBarInset: Dp = 0.dp, onExit: (() -> Unit)? = null) {
                     SettingsProfileHeader()
                 }
                 when (page) {
-                    null -> SettingsHome(onOpen = { page = it })
+                    null -> SettingsHome(onOpen = { page = it }, onCheckUpdate = {
+                        scope.launch {
+                            notice = "正在检查 GitHub 最新版本…"
+                            GitHubReleaseChecker.checkLatest().onSuccess { release ->
+                                notice = if (GitHubReleaseChecker.isNewer(release.tagName)) {
+                                    "发现新版本 ${release.tagName}，请前往 GitHub Release 下载"
+                                } else {
+                                    "当前已是最新版本 v${BuildConfig.VERSION_NAME}"
+                                }
+                            }.onFailure {
+                                notice = "检查更新失败：${it.message ?: "请检查网络连接"}"
+                            }
+                        }
+                    })
                     SettingsPage.MODEL -> ModelApiSettings(
                         gptKey, { gptKey = it }, showGptKey, { showGptKey = !showGptKey },
                         deepSeekKey, { deepSeekKey = it }, showDeepSeekKey, { showDeepSeekKey = !showDeepSeekKey },
@@ -348,7 +362,7 @@ fun SettingsScreen(bottomBarInset: Dp = 0.dp, onExit: (() -> Unit)? = null) {
 }
 
 @Composable
-private fun SettingsHome(onOpen: (SettingsPage) -> Unit) {
+private fun SettingsHome(onOpen: (SettingsPage) -> Unit, onCheckUpdate: () -> Unit) {
     SettingsGroup("模型配置") {
         SettingsEntry(Icons.Default.SmartToy, "默认模型与推理") { onOpen(SettingsPage.MODEL) }
         SettingsEntry(Icons.Default.Key, "API 密钥管理") { onOpen(SettingsPage.API_KEYS) }
@@ -373,6 +387,7 @@ private fun SettingsHome(onOpen: (SettingsPage) -> Unit) {
         SettingsEntry(Icons.Default.Info, "Metis Mobile v${BuildConfig.VERSION_NAME}", enabled = false) {}
         SettingsEntry(Icons.Default.Description, "开源协议：Apache 2.0", enabled = false) {}
         SettingsEntry(Icons.Default.Code, "GitHub：linyeping/metis-mobile", enabled = false) {}
+        SettingsEntry(Icons.Default.SystemUpdate, "检查更新") { onCheckUpdate() }
     }
 }
 
